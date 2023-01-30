@@ -6,5 +6,5 @@
    - **recommendation:** could attach ultraleap detector to camera but it highly will create TONS of errors :(
 
 
-### SOLUTIONS:
+### SOLUTIONS TO COINCIDED PROBLEMS:
 - There was a problem with multiplication, it wasn't working as expected. It turned out that Time.realtimeSinceStartup returns double but I assign the value to a float variable.
