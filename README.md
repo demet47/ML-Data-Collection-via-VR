@@ -1,4 +1,5 @@
-This is a research project done in BUVIAR (github: @buviar).
+This is a research project done in BUVIAR (**github:** [@buviar](https://github.com/buviar)). 
+
 The website for BUVIAR (Boğaziçi University Virtual Reality Laboratory) is [here](http://buviar.boun.edu.tr/) where you can browse our activities, projects, research articles and members.
 
 
