@@ -1,0 +1,22 @@
+[
+	{
+		"object_name": "Interaction Hand (Left) (UnityEngine.GameObject)",
+		"position_vector": {"x":0.0,"y":0.0,"z":0.0},
+		"rotation_vector": {"x":0.0,"y":0.0,"z":0.0,"w":1.0}
+	},
+	{
+		"object_name": "Camera (UnityEngine.GameObject)",
+		"position_vector": {"x":4650.20849609375,"y":7469.33642578125,"z":3405.225341796875},
+		"rotation_vector": {"x":0.6650728583335877,"y":-0.04082358255982399,"z":0.05200424790382385,"w":0.7438461780548096}
+	},
+	{
+		"object_name": "Hollow Cube (UnityEngine.GameObject)",
+		"position_vector": {"x":4501.8427734375,"y":6936.80517578125,"z":3782.065673828125},
+		"rotation_vector": {"x":0.49950772523880007,"y":0.5002015233039856,"z":0.49979811906814577,"w":-0.5004921555519104}
+	},
+	{
+		"object_name": "InteractionSphere (UnityEngine.GameObject)",
+		"position_vector": {"x":4750.68115234375,"y":6928.396484375,"z":3381.640625},
+		"rotation_vector": {"x":-0.17568567395210267,"y":0.7156208753585815,"z":0.6717579364776611,"w":-0.07591217011213303}
+	}
+]
