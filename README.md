@@ -1,4 +1,10 @@
-This is a research project done in BUVIAR (**github:** [@buviar](https://github.com/buviar)). 
+# 📚 WELCOME TO MY RESEARCH PROJECT
+
+### The project is based on an article named ["DeepSym: Deep Symbol Generation and Rule Learning for Planning from Unsupervised Robot Interaction"](https://www.jair.org/index.php/jair/article/view/13754/26858)
+
+
+
+#### This is a research project done in BUVIAR (**github:** [@buviar](https://github.com/buviar)). 
 
 The website for BUVIAR (Boğaziçi University Virtual Reality Laboratory) is [here](http://buviar.boun.edu.tr/) where you can browse our activities, projects, research articles and members.
 
