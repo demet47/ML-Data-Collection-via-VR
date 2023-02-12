@@ -9,7 +9,6 @@ public class LevelChangeOnPress : InteractionButton
 
     public static int globalCurrentSceneTracker = 1;
     public static float availableAt = 0;
-
     
     protected override void OnTriggerEnter(Collider collider)
     {
@@ -28,7 +27,10 @@ public class LevelChangeOnPress : InteractionButton
 
     private IEnumerator LoadSceneAsync(int levelName)
     {
+        //BEWARE below two lines may cause run time error
         var progress = SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Additive);
+        GameObject.Find("Camera/Multi Line TextMesh Pro").GetComponent<TextMesh>().text = StaticTextData.directiveText[globalCurrentSceneTracker];
+
         Debug.Log("Scene Loaded: " + (globalCurrentSceneTracker+1));
         ++globalCurrentSceneTracker;
         while (!progress.isDone)
