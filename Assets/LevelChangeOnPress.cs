@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using Leap.Unity.Interaction;
 using UnityEngine.SceneManagement;
-
+using TMPro;
 public class LevelChangeOnPress : InteractionButton
 {
     // Start is called before the first frame update
@@ -29,7 +29,7 @@ public class LevelChangeOnPress : InteractionButton
     {
         //BEWARE below two lines may cause run time error
         var progress = SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Additive);
-        GameObject.Find("Camera/Multi Line TextMesh Pro").GetComponent<TextMesh>().text = StaticTextData.directiveText[globalCurrentSceneTracker];
+        GameObject.Find("Camera/Multi Line TextMesh Pro").GetComponent<TextMeshPro>().text = StaticTextData.directiveText[globalCurrentSceneTracker];
 
         Debug.Log("Scene Loaded: " + (globalCurrentSceneTracker+1));
         ++globalCurrentSceneTracker;
