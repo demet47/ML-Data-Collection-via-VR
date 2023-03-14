@@ -7,19 +7,19 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using UnityEngine.UI;
+using Leap.Unity;
+
 
 public class HandDataCollect : MonoBehaviour
 {
     // Start is called before the first frame update
-    public Controller controller = new Controller();
-    public Frame frame;
 
+    public LeapXRServiceProvider leapXRServiceProvider;
     public TMPro.TMP_Text testText;
 
     int id;
     void Start()
     {
-        Debug.Log(controller.Config);
         //Debug.Log(controller.GetInterpolatedHeadPose());
         //Debug.Log(controller.)
         printJSON();
@@ -49,13 +49,16 @@ public class HandDataCollect : MonoBehaviour
 
         using (var _dataFile = new StreamWriter(Path.Combine(docPath, arrayDataPath)))
         {
-            
             _dataFile.WriteLine("[");
-            frame = controller.Frame(); // controller is a Controller object
-
-            if (frame.Hands.Count > 0)
+            if(leapXRServiceProvider == null){
+                Debug.Log("No xrProvider available");
+                _dataFile.WriteLine("]");
+                return;
+            }
+            List<Hand> hands = leapXRServiceProvider.CurrentFrame.Hands;
+            if (hands.Count > 0)
             {
-                List<Hand> hands = frame.Hands;
+                
                 int handCount = hands.Count;
                 foreach (Hand hand in hands)
                 {

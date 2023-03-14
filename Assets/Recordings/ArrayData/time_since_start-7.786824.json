@@ -1,0 +1,22 @@
+[
+	{
+		"object_name": "Camera (UnityEngine.GameObject)",
+		"position_vector": {"x":4897.1767578125,"y":7350.23876953125,"z":3555.488525390625},
+		"rotation_vector": {"x":0.5138704776763916,"y":-0.17364315688610078,"z":-0.3323565721511841,"w":0.7715725898742676}
+	},
+	{
+		"object_name": "Hollow Cube (UnityEngine.GameObject)",
+		"position_vector": {"x":4505.83056640625,"y":6937.2548828125,"z":3767.845703125},
+		"rotation_vector": {"x":0.5013386011123657,"y":0.4992278814315796,"z":0.4992808401584625,"w":-0.5001497864723206}
+	},
+	{
+		"object_name": "InteractionSphere (UnityEngine.GameObject)",
+		"position_vector": {"x":4815.9521484375,"y":6886.0009765625,"z":3428.126220703125},
+		"rotation_vector": {"x":-0.3651847839355469,"y":0.009527135640382767,"z":0.05936075747013092,"w":0.9289917945861816}
+	},
+	{
+		"object_name": "Capsule Hand Left (UnityEngine.GameObject)",
+		"position_vector": {"x":2250.0,"y":1860.0001220703125,"z":1470.0},
+		"rotation_vector": {"x":0.0,"y":0.0,"z":0.0,"w":1.0}
+	}
+]

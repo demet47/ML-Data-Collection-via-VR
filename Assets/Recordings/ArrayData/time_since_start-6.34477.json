@@ -1,0 +1,17 @@
+[
+	{
+		"object_name": "Camera (UnityEngine.GameObject)",
+		"position_vector": {"x":4962.3115234375,"y":7306.3203125,"z":3502.564453125},
+		"rotation_vector": {"x":0.6838785409927368,"y":-0.09129408746957779,"z":-0.12260455638170243,"w":0.7134029269218445}
+	},
+	{
+		"object_name": "Hollow Cube (UnityEngine.GameObject)",
+		"position_vector": {"x":4502.0,"y":6972.5419921875,"z":3782.0},
+		"rotation_vector": {"x":0.5,"y":0.5,"z":0.5,"w":-0.5}
+	},
+	{
+		"object_name": "InteractionSphere (UnityEngine.GameObject)",
+		"position_vector": {"x":4811.0,"y":6947.54150390625,"z":3460.0},
+		"rotation_vector": {"x":-0.46076470613479617,"y":0.08120725303888321,"z":0.07328803837299347,"w":0.8807554841041565}
+	}
+]
