@@ -1,0 +1,12 @@
+[
+	{
+		"object_name": "Camera (UnityEngine.GameObject)",
+		"position_vector": {"x":3800.0,"y":5800.0,"z":2280.0},
+		"rotation_vector": {"x":0.7071068286895752,"y":0.0,"z":0.0,"w":0.7071068286895752}
+	},
+	{
+		"object_name": "Hollow Cube (UnityEngine.GameObject)",
+		"position_vector": {"x":4502.0,"y":6972.5419921875,"z":3782.0},
+		"rotation_vector": {"x":0.5,"y":0.5,"z":0.5,"w":-0.5}
+	}
+]
