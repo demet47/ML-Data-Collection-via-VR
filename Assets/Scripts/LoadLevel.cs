@@ -7,7 +7,7 @@ public class LoadLevel : MonoBehaviour
     public bool loadLevel;
     public bool initialScene = true;
     public static int sceneCount = 1;
-    void Update()
+    void Start()
     {
         if (initialScene)
         {
@@ -22,8 +22,6 @@ public class LoadLevel : MonoBehaviour
             initialScene = false;
             yield return null;
         }
-
-
 
         Debug.Log("Level Loaded: 1");
     }

@@ -9,21 +9,52 @@ public class LevelChangeOnPress : InteractionButton
 
     public static int globalCurrentSceneTracker = 1;
     public static float availableAt = 0;
-    
+    private bool initialScene = true;
+
+
+    protected override void Start()
+    {
+        if (initialScene)
+        {
+            StartCoroutine(LoadFirstSceneAsync());
+        }
+    }
+
+
+
     protected override void OnTriggerEnter(Collider collider)
     {
         if (Time.time > availableAt) {
             if ((SceneManager.sceneCountInBuildSettings > globalCurrentSceneTracker+1))
             {
                 if(globalCurrentSceneTracker+1 != 1) StartCoroutine(RemoveSceneAsync(globalCurrentSceneTracker));
-                StartCoroutine(Wait());
+                Wait(5);
                 StartCoroutine(LoadSceneAsync(globalCurrentSceneTracker+1));
-                StartCoroutine(Wait());
+                Wait(5);
             }
             else Debug.Log("No more sample scenes left.");
         }
         availableAt = Time.time + 3;
     }
+
+
+
+    //BELOW ARE COROUTINES FOR SCENE LOADING-REMOVAL
+
+
+    private IEnumerator LoadFirstSceneAsync()
+    {
+        var progress = SceneManager.LoadSceneAsync(1, LoadSceneMode.Additive);
+        while (!progress.isDone)
+        {
+            initialScene = false;
+            yield return null;
+        }
+
+        Debug.Log("Level Loaded: 1");
+    }
+
+    
 
     private IEnumerator LoadSceneAsync(int levelName)
     {
@@ -39,10 +70,6 @@ public class LevelChangeOnPress : InteractionButton
         }
     }
 
-    private IEnumerator Wait(){
-        yield return new WaitForSeconds(5);
-    }
-
     private IEnumerator RemoveSceneAsync(int scene)
     {
         var progress = SceneManager.UnloadSceneAsync(scene);
@@ -54,6 +81,8 @@ public class LevelChangeOnPress : InteractionButton
         }
     }
 
-}
+    IEnumerator Wait(int seconds){
+        yield return new WaitForSeconds(seconds);
+    }
 
-//-316.668    -244.95     1.026
+}
