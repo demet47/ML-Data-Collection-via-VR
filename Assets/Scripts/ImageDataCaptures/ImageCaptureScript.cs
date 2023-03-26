@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections;
 using System.IO;
+using System.Collections.Generic;
 
 // @TODO:
 // . support custom color wheels in optical flow via lookup textures
@@ -15,32 +16,39 @@ using System.IO;
 //      1) during the first rendering frame
 //      2) rendering several cameras with different aspect ratios - vectors do stretch to the sides of the screen
 
+/*
+    MY NOTES:
+    the capture precision is miliseconds.
+    
+*/
+
+
+
+
 [RequireComponent(typeof(Camera))]
-public class ImageSynthesis : MonoBehaviour
+public class ImageCaptureScript : MonoBehaviour
+
 {
+
     [Header("Shader Setup")]
     public Shader uberReplacementShader;
     public Shader opticalFlowShader;
     public float opticalFlowSensitivity = 1.0f;
+    private bool saveImage = true;
+    private bool saveDepth = true;
+    private static string currentPath = Directory.GetCurrentDirectory();
+    private string filepath = currentPath + "\\Assets\\Recordings\\ImageData";
+    private static double timeInMilisecond = 0;
+    private string filename = "capture_";
+    //private Vector2 gameViewSize = UnityEditor.Handles.GetMainGameViewSize();
 
-    [Header("Save Image Capture")]
-    public bool saveImage = true;
-    public bool saveIdSegmentation = true;
-    public bool saveLayerSegmentation = true;
-    public bool saveDepth = true;
-    public bool saveNormals = true;
-    public bool saveOpticalFlow;
-    public string filepath = "..\\Captures";
-    public string filename = "test.png";
+    [SerializeField]
+    private int saveRateInMiliseconds = 1000;
 
     // pass configuration
     private CapturePass[] capturePasses = new CapturePass[] {
         new CapturePass() { name = "_img" },
-        new CapturePass() { name = "_id", supportsAntialiasing = false },
-        new CapturePass() { name = "_layer", supportsAntialiasing = false },
         new CapturePass() { name = "_depth" },
-        new CapturePass() { name = "_normals" },
-        new CapturePass() { name = "_flow", supportsAntialiasing = false, needsRescale = true } // (see issue with Motion Vectors in @KNOWN ISSUES)
     };
 
     struct CapturePass
@@ -61,30 +69,49 @@ public class ImageSynthesis : MonoBehaviour
     void Start()
     {
         // default fallbacks, if shaders are unspecified
-        if (!uberReplacementShader)
-            uberReplacementShader = Shader.Find("Hidden/UberReplacement");
 
         if (!opticalFlowShader)
             opticalFlowShader = Shader.Find("Hidden/OpticalFlow");
 
         // use real camera to capture final image
         capturePasses[0].camera = GetComponent<Camera>();
-        for (int q = 1; q < capturePasses.Length; q++)
-            capturePasses[q].camera = CreateHiddenCamera(capturePasses[q].name);
+
+        capturePasses[1].camera = CreateHiddenCamera(capturePasses[1].name);
 
         OnCameraChange();
-        OnSceneChange();
-    }
-
-    void LateUpdate()
-    {
-#if UNITY_EDITOR
+        
+        #if UNITY_EDITOR
         if (DetectPotentialSceneChangeInEditor())
             OnSceneChange();
-#endif // UNITY_EDITOR
+        #endif
+
+        timeInMilisecond = 0; //a little off synchrone, it lags Time.realtimeSinceStartup amount of seconds
+        var passfilename = Path.GetFileNameWithoutExtension(filename + timeInMilisecond);
+        //Save(filename + timeInMilisecond, width: (int)gameViewSize.x, height: (int)gameViewSize.y, filepath);
+        Save(passfilename, width: Screen.width, height: Screen.height, filepath); //!!A
+    }
+
+    //The capture times claimed may be erroneous under a certain treshold value for saveRateInMiliseconds, due to the way we chose to do increment in line 101 
+    //This treshold value hasn't been determined yet and requires bruteforce testing.
+    void Update()
+    {
+        #if UNITY_EDITOR
+        if (DetectPotentialSceneChangeInEditor())
+            OnSceneChange();
+        #endif // UNITY_EDITOR
 
         // @TODO: detect if camera properties actually changed
         OnCameraChange();
+
+        float currentTime = Time.realtimeSinceStartup * 1000;
+        if (currentTime >= timeInMilisecond + saveRateInMiliseconds)
+        {
+            timeInMilisecond = timeInMilisecond + saveRateInMiliseconds;
+            //Save(filename + time, width: (int)gameViewSize.x, height: (int)gameViewSize.y, filepath);
+            var passfilename = Path.GetFileNameWithoutExtension(filename + timeInMilisecond);
+            Save(passfilename, width: Screen.width, height: Screen.height, filepath);//!!A
+        }
+        
     }
 
     private Camera CreateHiddenCamera(string name)
@@ -92,16 +119,11 @@ public class ImageSynthesis : MonoBehaviour
         var go = new GameObject(name, typeof(Camera));
         go.hideFlags = HideFlags.HideAndDontSave;
         go.transform.parent = transform;
-
+        //go.depthTextureMode = true;
         var newCamera = go.GetComponent<Camera>();
         return newCamera;
     }
 
-
-    static private void SetupCameraWithReplacementShader(Camera cam, Shader shader, ReplacementMode mode)
-    {
-        SetupCameraWithReplacementShader(cam, shader, mode, Color.black);
-    }
 
     static private void SetupCameraWithReplacementShader(Camera cam, Shader shader, ReplacementMode mode, Color clearColor)
     {
@@ -116,6 +138,7 @@ public class ImageSynthesis : MonoBehaviour
         cam.allowMSAA = false;
     }
 
+    //BELOW IS IMPORTANT
     static private void SetupCameraWithPostShader(Camera cam, Material material, DepthTextureMode depthTextureMode = DepthTextureMode.None)
     {
         var cb = new CommandBuffer();
@@ -156,13 +179,8 @@ public class ImageSynthesis : MonoBehaviour
         if (!opticalFlowMaterial || opticalFlowMaterial.shader != opticalFlowShader)
             opticalFlowMaterial = new Material(opticalFlowShader);
         opticalFlowMaterial.SetFloat("_Sensitivity", opticalFlowSensitivity);
-
         // setup command buffers and replacement shaders
-        SetupCameraWithReplacementShader(capturePasses[1].camera, uberReplacementShader, ReplacementMode.ObjectId);
-        SetupCameraWithReplacementShader(capturePasses[2].camera, uberReplacementShader, ReplacementMode.CatergoryId);
-        SetupCameraWithReplacementShader(capturePasses[3].camera, uberReplacementShader, ReplacementMode.DepthCompressed, Color.white);
-        SetupCameraWithReplacementShader(capturePasses[4].camera, uberReplacementShader, ReplacementMode.Normals);
-        SetupCameraWithPostShader(capturePasses[5].camera, opticalFlowMaterial, DepthTextureMode.Depth | DepthTextureMode.MotionVectors);
+        SetupCameraWithReplacementShader(capturePasses[1].camera, uberReplacementShader, ReplacementMode.DepthCompressed, Color.white);
     }
 
 
@@ -182,7 +200,7 @@ public class ImageSynthesis : MonoBehaviour
         }
     }
 
-    public void Save(string filename, int width = -1, int height = -1, string path = "")
+    public void Save(string filename, int width = -1, int height = -1, string path = "") //!!A
     {
         if (width <= 0 || height <= 0)
         {
@@ -205,76 +223,69 @@ public class ImageSynthesis : MonoBehaviour
     private IEnumerator WaitForEndOfFrameAndSave(string filenameWithoutExtension, string filenameExtension, int width, int height)
     {
         yield return new WaitForEndOfFrame();
-        Save(filenameWithoutExtension, filenameExtension, width, height);
-    }
-
-    private void Save(string filenameWithoutExtension, string filenameExtension, int width, int height)
-    {
         foreach (var pass in capturePasses)
         {
             // Perform a check to make sure that the capture pass should be saved
             if (
                 (pass.name == "_img" && saveImage) ||
-                (pass.name == "_id" && saveIdSegmentation) ||
-                (pass.name == "_layer" && saveLayerSegmentation) ||
-                (pass.name == "_depth" && saveDepth) ||
-                (pass.name == "_normals" && saveNormals) ||
-                (pass.name == "_flow" && saveOpticalFlow)
+                (pass.name == "_depth" && saveDepth)
             )
             {
-                Save(pass.camera, filenameWithoutExtension + pass.name + filenameExtension, width, height, pass.supportsAntialiasing, pass.needsRescale);
+                string filename = filenameWithoutExtension + pass.name + filenameExtension;
+                var mainCamera = GetComponent<Camera>();
+                var depth = 24;
+                var format = RenderTextureFormat.Default;
+                var readWrite = RenderTextureReadWrite.Default;
+                var antiAliasing = (pass.supportsAntialiasing) ? Mathf.Max(1, QualitySettings.antiAliasing) : 1;
+
+                var finalRT =
+                    RenderTexture.GetTemporary(width, height, depth, format, readWrite, antiAliasing);
+                var renderRT = (!pass.needsRescale) ? finalRT :
+                    RenderTexture.GetTemporary(mainCamera.pixelWidth, mainCamera.pixelHeight, depth, format, readWrite, antiAliasing);
+                var tex = new Texture2D(width, height, TextureFormat.RGB24, false);
+
+                var prevActiveRT = RenderTexture.active;
+                var prevCameraRT = pass.camera.targetTexture;
+
+                // render to offscreen texture (readonly from CPU side)
+                RenderTexture.active = renderRT;
+                pass.camera.targetTexture = renderRT;
+
+                pass.camera.Render();
+
+                if (pass.needsRescale)
+                {
+                    // blit to rescale (see issue with Motion Vectors in @KNOWN ISSUES)
+                    RenderTexture.active = finalRT;
+                    Graphics.Blit(renderRT, finalRT);
+                    RenderTexture.ReleaseTemporary(renderRT);
+                }
+
+                // read offsreen texture contents into the CPU readable texture
+                tex.ReadPixels(new Rect(0, 0, tex.width, tex.height), 0, 0);
+                tex.Apply();
+                pass.camera.targetTexture = prevCameraRT;
+
+
+                // encode texture into PNG
+                var bytes = tex.EncodeToPNG();
+                yield return null;
+                File.WriteAllBytes(filename, bytes);
+                yield return null;
+                // restore state and cleanup
+                
+                RenderTexture.active = prevActiveRT;
+
+                Object.Destroy(tex);
+                RenderTexture.ReleaseTemporary(finalRT);
             }
+
+            yield return null;
         }
     }
 
-    private void Save(Camera cam, string filename, int width, int height, bool supportsAntialiasing, bool needsRescale)
-    {
-        var mainCamera = GetComponent<Camera>();
-        var depth = 24;
-        var format = RenderTextureFormat.Default;
-        var readWrite = RenderTextureReadWrite.Default;
-        var antiAliasing = (supportsAntialiasing) ? Mathf.Max(1, QualitySettings.antiAliasing) : 1;
 
-        var finalRT =
-            RenderTexture.GetTemporary(width, height, depth, format, readWrite, antiAliasing);
-        var renderRT = (!needsRescale) ? finalRT :
-            RenderTexture.GetTemporary(mainCamera.pixelWidth, mainCamera.pixelHeight, depth, format, readWrite, antiAliasing);
-        var tex = new Texture2D(width, height, TextureFormat.RGB24, false);
-
-        var prevActiveRT = RenderTexture.active;
-        var prevCameraRT = cam.targetTexture;
-
-        // render to offscreen texture (readonly from CPU side)
-        RenderTexture.active = renderRT;
-        cam.targetTexture = renderRT;
-
-        cam.Render();
-
-        if (needsRescale)
-        {
-            // blit to rescale (see issue with Motion Vectors in @KNOWN ISSUES)
-            RenderTexture.active = finalRT;
-            Graphics.Blit(renderRT, finalRT);
-            RenderTexture.ReleaseTemporary(renderRT);
-        }
-
-        // read offsreen texture contents into the CPU readable texture
-        tex.ReadPixels(new Rect(0, 0, tex.width, tex.height), 0, 0);
-        tex.Apply();
-
-        // encode texture into PNG
-        var bytes = tex.EncodeToPNG();
-        File.WriteAllBytes(filename, bytes);
-
-        // restore state and cleanup
-        cam.targetTexture = prevCameraRT;
-        RenderTexture.active = prevActiveRT;
-
-        Object.Destroy(tex);
-        RenderTexture.ReleaseTemporary(finalRT);
-    }
-
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
     private GameObject lastSelectedGO;
     private int lastSelectedGOLayer = -1;
     private string lastSelectedGOTag = "unknown";
@@ -306,5 +317,5 @@ public class ImageSynthesis : MonoBehaviour
 
         return change;
     }
-#endif // UNITY_EDITOR
+    #endif // UNITY_EDITOR
 }

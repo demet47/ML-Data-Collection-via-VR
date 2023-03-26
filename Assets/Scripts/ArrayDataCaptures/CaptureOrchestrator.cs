@@ -34,7 +34,7 @@ public class CaptureOrchestrator : MonoBehaviour
 
      IEnumerator capture(){
         float time = Time.realtimeSinceStartup; //the unit is SECONDS
-        while(time  * 1000 < timeTrackingMilisec + saveRateInMiliseconds){
+        while(time  * 1000 <= timeTrackingMilisec + saveRateInMiliseconds){
             yield return null;
         } //this can be enhanced. This can cause some skipped periodic captures
         
@@ -52,8 +52,8 @@ public class CaptureOrchestrator : MonoBehaviour
             stringtime = stringtime.Substring(0, stringtime.IndexOf('.'));
 
         string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        string currentPath = Directory.GetCurrentDirectory();
-        string arrayDataPath = currentPath + "\\Assets\\Recordings\\HandData\\time_since_start-" + stringtime + ".json";
+        string currentPath = Directory.GetCurrentDirectory().Replace("\\", "/");
+        string arrayDataPath = currentPath + "/Assets/Recordings/HandData/time_since_start-" + stringtime + ".json";
 
         using (var _dataFile = new StreamWriter(Path.Combine(docPath, arrayDataPath)))
         {
@@ -206,8 +206,8 @@ public class CaptureOrchestrator : MonoBehaviour
     {
         string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
-        string currentPath = Directory.GetCurrentDirectory();
-        string arrayDataPath = currentPath + "\\Assets\\Recordings\\ArrayData\\time_since_start-" + time + ".json";
+        string currentPath = Directory.GetCurrentDirectory().Replace("\\", "/");
+        string arrayDataPath = currentPath + "/Assets/Recordings/ArrayData/time_since_start-" + time + ".json";
         
         using (var writer = new StreamWriter(Path.Combine(docPath, arrayDataPath)))
         {
