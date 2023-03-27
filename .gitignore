@@ -1,5 +1,6 @@
 # Files to not ignore
 !/.gitignore
+!/git_add.sh
 
 # Folder to not ignore
 !/.vscode/
