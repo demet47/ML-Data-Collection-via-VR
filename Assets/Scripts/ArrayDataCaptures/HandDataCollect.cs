@@ -84,19 +84,19 @@ public class HandDataCollect : MonoBehaviour
                     _dataFile.WriteLine(roll + ",");
 
                     //center position of the palm in global scene (in milimeters)
-                    Vector handCenter = hand.PalmPosition;
+                    Vector handCenter = hand.PalmPosition * 1000;
                     _dataFile.Write("\t\t\"palm_center_position\":");
                     var handCenterJ = JsonUtility.ToJson(handCenter);
                     _dataFile.WriteLine(handCenterJ + ",");
 
                     //rate of change of the palm position (in milimeters/second)
-                    Vector handSpeed = hand.PalmVelocity;
+                    Vector handSpeed = hand.PalmVelocity * 1000;
                     _dataFile.Write("\t\t\"palm_velocity\":");
                     var handSpeedJ = JsonUtility.ToJson(handSpeed);
                     _dataFile.WriteLine(handSpeedJ + ",");
 
                     //estimated width of the palm when the hand is in a flat position (milimeters)
-                    float handWidth = hand.PalmWidth;
+                    float handWidth = hand.PalmWidth * 1000;
                     _dataFile.Write("\t\t\"palm_width\":");
                     _dataFile.WriteLine(handWidth + ",");
 
@@ -108,7 +108,7 @@ public class HandDataCollect : MonoBehaviour
                             - yAxis Positive above the hand
                             - zAxis Positive in the direction of the wrist
                     */
-                    Vector translationOfTheHand = hand.Basis.translation;
+                    Vector translationOfTheHand = hand.Basis.translation * 1000;
                     _dataFile.Write("\t\t\"transform_of_hand_as_basis\":");
                     var translationOfTheHandJ = JsonUtility.ToJson(translationOfTheHand);
                     _dataFile.WriteLine(translationOfTheHandJ + ",");
@@ -125,12 +125,12 @@ public class HandDataCollect : MonoBehaviour
                     _dataFile.WriteLine(grabAngle + ",");
 
                     // The distance between the thumb and index finger of a pinch hand pose (in milimeters)
-                    float pinchDistance = hand.PinchDistance;
+                    float pinchDistance = hand.PinchDistance; //TODO: NOT SURE THIS SCALES RIGHT
                     _dataFile.Write("\t\t\"pinch_distance\":");
                     _dataFile.WriteLine(pinchDistance + ",");
 
                     // The time-filtered position of the palm (in milimeters)
-                    Vector stabilizedPalmPosition = hand.StabilizedPalmPosition; 
+                    Vector stabilizedPalmPosition = hand.StabilizedPalmPosition  * 1000; 
                     _dataFile.Write("\t\t\"time_filtered_palm_position\":");
                     var stabilizedPalmPositionJ = JsonUtility.ToJson(stabilizedPalmPosition);
                     _dataFile.WriteLine(stabilizedPalmPositionJ + ",");
@@ -156,18 +156,18 @@ public class HandDataCollect : MonoBehaviour
 
                         // the tip position (in millimeters) from the Leap Motion origin.
                         _dataFile.Write("\t\t\t\t\"stabilized_tip_position\":");
-                        Vector stabilizedTipPosition = finger.TipPosition; 
+                        Vector stabilizedTipPosition = finger.TipPosition * 1000; 
                         var stabilizedTipPositionJ = JsonUtility.ToJson(stabilizedTipPosition);
                         _dataFile.WriteLine(stabilizedTipPositionJ + ",");
 
                         // width of finger (in milimeters)
                         _dataFile.Write("\t\t\t\t\"width_of_finger\":");
-                        float width = finger.Width; 
+                        float width = finger.Width  * 1000; 
                         _dataFile.WriteLine(width + ",");
 
                         // length of the finger (in milimeters)
                         _dataFile.Write("\t\t\t\t\"length_of_finger\":");
-                        float length = finger.Length; 
+                        float length = finger.Length  * 1000; 
                         _dataFile.WriteLine(length);
                         
                         _dataFile.Write("\t\t\t}");
