@@ -21,4 +21,4 @@ The website for BUVIAR (Boğaziçi University Virtual Reality Laboratory) is [he
 
 **Important Note:** _The code that made the second camera in scene gather depth information was inspired and originated from [this](https://github.com/immersive-limit/Unity-ComputerVisionSim) repository._
 
-**PS:** The Ultraleap customer support is utterly responsive. When you ask a question, within a week they respond to you by opening an issue in their own platform and communicating with you one-to-one. I reached them for a couple of topics, they even browsed my project repository once to give an on-the-spot solution specific to my problem. They also have a developers community in Discord.
+**PS:** _The Ultraleap customer support is utterly responsive. When you ask a question, within a week they respond to you by opening an issue in their own platform and communicating with you one-to-one. I reached them for a couple of topics, they even browsed my project repository once to give an on-the-spot solution specific to my problem. They also have a developers community in Discord._
